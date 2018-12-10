@@ -1,0 +1,136 @@
+FORMAT: 1A
+HOST: http://localhost
+
+# Group Tasks
+
+# Tasks List API View [/api/v1/tasks]
+
+## Get Tasks List [GET]
+
++ Request example (application/json)
+
++ Response 200 (application/json)
+
+    + Attributes
+        + count: 1 (number)
+        + next: `http://localhost/api/v1/images/?limit=15&offset=15` (string)
+        + previous: `null` (string)
+        + result (array[Task])
+
+## Create New Tasks [POST]
+
+### Parameters
+
+
+#### target_url
+ - Targeted URL of website from which data will be fetch
+#### depth
+Depth of fetching data. After fetching all links from target url there
+ will be executed further sub tasks to fetch data from pages in hyper links
+#### task_type:
+ Decides if parser will parse images, text or both.
+ Available choices:
+  * `0` - text
+  * `1` - images
+  * `2` - text and images (default)
+#### parser:
+Parser classes defined in backend define strategies of parsing text, links and images. Available choices:
+ * `0` - GenericParser
+#### crawler:
+ Crawler classes defined in backend provides strategies of making HTTP requests to pages. Available choices:
+  * `0` - GenericParser
+#### images_storage:
+ Storage to preserve fetch data. S3 is available if AWS API keys where provided as environment variables.
+ Available choices:
+  * `0` - local (default)
+  * `1` - s3
+
++ Request example (application/json)
+
+    + Attributes
+        + target_url: `https://bbc.com/news`
+        + depth: 1 (number)
+        + parser: 0
+        + crawler: 0
+        + images_storage: 0
+        + task_type: 3
+
++ Response 200 (application/json)
+
+    + Attributes(Task)
+
+
+# Task API View [/api/v1/tasks/{id}]
++ Parameters
+
+    + id: 1 (number) - Task ID
+
+## Get Task [GET]
+
++ Request example (application/json)
+
++ Response 200 (application/json)
+
+    + Attributes(Task)
+
+# Task Pages API View [/api/v1/tasks/{id}/pages]
++ Parameters
+
+    + id: 1 (number) - Task ID
+
+## Get Pages List Within Task [GET]
+
++ Request example (application/json)
+
++ Response 200 (application/json)
+
+    + Attributes
+        + count: 1 (number)
+        + next: `http://localhost/api/v1/task/1/pages?limit=15&offset=15` (string)
+        + previous: `null` (string)
+        + result (array[Page])
+
+# Page API View [/api/v1/tasks/{task_id}/pages/{page_id}]
++ Parameters
+
+    + `task_id`: 1 (number) - Task ID
+    + `page_id`: 1 (number) - Page ID
+
+## Page Within Task [GET]
+
++ Request example (application/json)
+
++ Response 200 (application/json)
+
+    + Attributes(DetailedPage)
+
+
+
+## Data Structures
+### Task
++ id: 1 (number)
++ created_at: `2018-12-09T23:20:55.335617Z`
++ updated_at: `2018-12-09T23:30:32.064713Z`
++ target_url: `https://www.bbc.com/news`
++ depth: 2 (number)
++ parser: `GenericParser`
++ crawler: `GenericCrawler`
++ task_type: 'text and images'
++ done: true (boolean)
++ pages_count: 113 (number)
++ succeed_at: 1.0 (number)
+
+### Page
++ id: 13 (number)
++ target_url: `https://www.bbc.com/news/uk`
++ error: false (boolean)
++ done: true (boolean)
+
+### Image
++ id: 1 (number)
++ url: `http://127.0.0.1:8000/api/v1/media/_104694916_ramiro_boy976.jpg`
++ storage: `local`
+
+### DetailedPage(Page)
++ text: `Lorem ipsum ....`
++ images (array[Image])

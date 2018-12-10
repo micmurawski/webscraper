@@ -1,0 +1,4 @@
+flake8==3.3.0
+isort==4.2.15
+bandit==1.4.0
+coverage==4.5.1
